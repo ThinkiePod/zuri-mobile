@@ -1,14 +1,15 @@
 import ScreenWrapper from "@/components/ScreenWrapper";
+import React from "react";
 import { Text, View } from "react-native";
 
-const OnboardingScreen = () => {
+const FeedbackScreen = () => {
   return (
     <ScreenWrapper>
       <View>
-        <Text>OnboardingScreen</Text>
+        <Text>FeedbackScreen</Text>
       </View>
     </ScreenWrapper>
   );
 };
 
-export default OnboardingScreen;
+export default FeedbackScreen;

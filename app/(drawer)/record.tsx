@@ -1,14 +1,15 @@
 import ScreenWrapper from "@/components/ScreenWrapper";
+import React from "react";
 import { Text, View } from "react-native";
 
-const ChildProfile = () => {
+const RecordScreen = () => {
   return (
     <ScreenWrapper>
       <View>
-        <Text>ChildProfile</Text>
+        <Text>RecordScreen</Text>
       </View>
     </ScreenWrapper>
   );
 };
 
-export default ChildProfile;
+export default RecordScreen;

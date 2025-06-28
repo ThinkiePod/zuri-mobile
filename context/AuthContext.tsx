@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
 
       // Navigate to main app
-      router.replace("/(tabs)");
+      router.replace("/");
     } catch (error) {
       throw error;
     } finally {
@@ -223,7 +223,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setUser(userData);
-        router.replace("/(tabs)");
+        router.replace("/");
       }
     } catch (error) {
       throw error;

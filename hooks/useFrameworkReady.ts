@@ -9,15 +9,19 @@ export function useFrameworkReady() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (!user) {
-        // User not authenticated, redirect to onboarding
-        router.replace("/onboarding");
-      } else if (user && child) {
-        // User and child profile exist, go to main app
-        router.replace("/(tabs)");
-      } else if (user && !child) {
-        // User exists but no child profile, continue onboarding
-        router.replace("/onboarding/child-profile");
+      try {
+        if (!user) {
+          // User not authenticated, redirect to onboarding
+          router.replace("/onboarding");
+        } else if (user && child) {
+          // User and child profile exist, go to main app
+          router.replace("/");
+        } else if (user && !child) {
+          // User exists but no child profile, continue onboarding
+          router.replace("/onboarding/child-profile");
+        }
+      } catch (error) {
+        console.error("Navigation failed:", error);
       }
     }
   }, [user, child, isLoading]);
