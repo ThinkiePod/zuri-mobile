@@ -4,12 +4,12 @@
     "slug": "zuri-companion-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/ios-light.png",
     "scheme": "zuri",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/icons/splash-icon-dark.png",
       "resizeMode": "contain",
       "backgroundColor": "#5E9CF3"
     },
@@ -23,13 +23,19 @@
         "NSCameraUsageDescription": "Camera access is needed for taking profile photos.",
         "NSMicrophoneUsageDescription": "Microphone access is needed for voice interactions with Zuri.",
         "NSBluetoothPeripheralUsageDescription": "Bluetooth is required to connect with your Zuri device."
+      },
+      "icon": {
+        "dark": "./assets/icons/ios-dark.png",
+        "tinted": "./assets/icons/ios-tinted.png",
+        "light": "./assets/icons/ios-light.png"
       }
     },
     "android": {
       "package": "com.zuri.companion",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "monochromeImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#5E9CF3"
       },
       "permissions": [
@@ -45,7 +51,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/icons/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -54,10 +60,14 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/icons/splash-icon-light.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#000000",
+          "dark": {
+            "image": "./assets/icons/splash-icon-dark.png",
+            "backgroundColor": "#FFFFFF"
+          }
         }
       ],
       [

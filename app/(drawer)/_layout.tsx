@@ -5,6 +5,7 @@ import {
   Fontisto,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import {
@@ -211,7 +212,11 @@ const DrawerLayout = () => {
           options={{
             drawerLabel: "Customization",
             drawerIcon: ({ color }) => (
-              <Ionicons size={28} name="settings-outline" color={color} />
+              <MaterialIcons
+                size={28}
+                name="dashboard-customize"
+                color={color}
+              />
             ),
           }}
         />
@@ -231,9 +236,6 @@ const DrawerLayout = () => {
             drawerIcon: ({ color }) => (
               <SimpleLineIcons size={28} name="question" color={color} />
             ),
-            drawerStyle: {
-              display: "none",
-            },
           }}
         />
       </Drawer>
