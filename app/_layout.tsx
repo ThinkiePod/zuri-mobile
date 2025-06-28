@@ -31,6 +31,19 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="onboarding/child-profile"
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="onboarding/index"
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
       </AuthProvider>

@@ -56,8 +56,16 @@ const TabLayout = () => {
           >
             {state.routes.map((route, index) => {
               const { options } = descriptors[route.key];
-              const label = options.tabBarLabel || options.title || route.name;
               const isFocused = state.index === index;
+              const label =
+                typeof options.tabBarLabel === "function"
+                  ? options.tabBarLabel({
+                      color: "#FFF",
+                      focused: isFocused,
+                      position: options.tabBarLabelPosition ?? "below-icon",
+                      children: "",
+                    })
+                  : options.tabBarLabel || options.title || route.name;
 
               const onPress = () => {
                 const event = navigation.emit({
@@ -95,8 +103,19 @@ const TabLayout = () => {
                       marginTop: 2,
                     }}
                   >
-                    {label as string}
+                    {label}
                   </Text>
+                  {isFocused && (
+                    <View
+                      style={{
+                        width: 20,
+                        height: 2,
+                        backgroundColor: "#FFF",
+                        marginTop: 4,
+                        borderRadius: 1,
+                      }}
+                    />
+                  )}
                 </TouchableOpacity>
               );
             })}
