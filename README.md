@@ -64,7 +64,6 @@ The app includes comprehensive dummy data for testing all features:
 ### Features to Test
 
 1. **Onboarding Flow**
-
    - Welcome screen
    - Parent signup/login
    - Child profile creation
@@ -73,7 +72,6 @@ The app includes comprehensive dummy data for testing all features:
    - Feature tour
 
 2. **Main App Features**
-
    - **Dashboard:** View child's activity, device status, quick actions
    - **Library:** Browse stories, affirmations, phonics games, routines
    - **Customize:** Adjust voice, LED, and touch settings
@@ -288,3 +286,35 @@ For questions or support, please:
 ---
 
 Built with ❤️ using Expo, React Native, and Bun.
+
+1. Music Player (Original use case)
+
+```tsx
+<CustomSlider
+  value={currentTime}
+  maximumValue={duration}
+  onValueChange={seekTo}
+  labelFormatter={formatDuration}
+  showCurrentValue={true}
+  currentValuePosition="top"
+/>
+```
+
+2. Range Slider for Limit Setting
+
+```tsx
+<CustomSlider
+  mode="range"
+  lowValue={minAge}
+  highValue={maxAge}
+  minimumValue={0}
+  maximumValue={100}
+  step={1}
+  onValuesChange={(low, high) => {
+    setMinAge(low);
+    setMaxAge(high);
+  }}
+  showStepMarkers={true}
+  labelFormatter={(val) => `${val} years`}
+/>
+```

@@ -1,132 +1,243 @@
-import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/utils/colors";
+import { assets } from "@/utils/images";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { BatteryFullIcon, Bell, Book, Heart, Send } from "lucide-react-native";
+import { useState } from "react";
 import {
-  DEVICE_STATUS,
-  RECENT_ACTIVITIES,
-  STORIES,
-  type Activity,
-} from "@/data/mockData";
-import { router } from "expo-router";
-import { Battery, BookOpen, Clock, Heart, Sparkles } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { LineChart } from "react-native-gifted-charts";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const OnboardingScreen = () => {
-  const { colors } = useTheme();
-  const { user, child } = useAuth();
-  const [greeting, setGreeting] = useState("Good morning");
-  const [deviceStatus, setDeviceStatus] = useState(DEVICE_STATUS);
-  const [recentActivities, setRecentActivities] = useState(
-    RECENT_ACTIVITIES.slice(0, 3)
-  );
-  const [todayHighlight, setTodayHighlight] = useState(STORIES[0]);
-  const [unreadMessages, setUnreadMessages] = useState(2);
+const HomeScreen = () => {
+  const [chartDimensions, setChartDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
 
-  useEffect(() => {
-    // Set greeting based on time of day
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      setGreeting("Good morning");
-    } else if (hour < 18) {
-      setGreeting("Good afternoon");
-    } else {
-      setGreeting("Good evening");
-    }
-
-    // Simulate battery drain over time
-    const interval = setInterval(() => {
-      setDeviceStatus((prev) => ({
-        ...prev,
-        batteryLevel: Math.max(5, prev.batteryLevel - Math.random() * 2),
-      }));
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getBatteryColor = (level: number) => {
-    if (level > 50) return colors.success;
-    if (level > 20) return colors.warning;
-    return colors.error;
-  };
-
-  const getBatteryIcon = (level: number) => {
-    return <Battery size={20} color={getBatteryColor(level)} />;
-  };
-
-  const quickActions = [
-    {
-      id: "story",
-      title: "Play Story",
-      icon: <BookOpen size={24} color="white" />,
-      color: colors.primary,
-      onPress: () => router.push("/library"),
-    },
-    {
-      id: "affirmation",
-      title: "Daily Affirmation",
-      icon: <Heart size={24} color="white" />,
-      color: colors.secondary,
-      onPress: () => {
-        Alert.alert(
-          "Playing Affirmation",
-          'Starting "I Am Smart" affirmation...'
-        );
-      },
-    },
-    {
-      id: "phonics",
-      title: "Phonics Game",
-      icon: <Sparkles size={24} color="white" />,
-      color: colors.accent,
-      onPress: () => {
-        Alert.alert("Starting Game", "Loading CVC Words game...");
-      },
-    },
-    {
-      id: "routine",
-      title: "Start Routine",
-      icon: <Clock size={24} color="white" />,
-      color: colors.tertiary,
-      onPress: () => {
-        const hour = new Date().getHours();
-        const routineType =
-          hour < 12 ? "Morning" : hour > 19 ? "Bedtime" : "After-School";
-        Alert.alert("Starting Routine", `Beginning ${routineType} routine...`);
-      },
-    },
+  const data = [
+    { value: 2, label: "4" },
+    { value: 4, label: "5" },
+    { value: 8, label: "6" },
+    { value: 10, label: "7" },
   ];
 
-  const handleActivityPress = (activity: Activity) => {
-    Alert.alert(
-      `Resume ${activity.type}`,
-      `Continue with "${activity.title}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Resume",
-          onPress: () => console.log("Resuming activity:", activity.id),
-        },
-      ]
-    );
-  };
-
-  const handleDeviceSettings = () => {
-    router.push("/customize");
-  };
-
-  const handleMessages = () => {
-    Alert.alert("Messages", "Opening conversation with Zuri...");
-    setUnreadMessages(0);
-  };
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      edges={["top"]}
-    >
-      <ScrollView>
-        <Text>Edit app/index.tsx to edit this screen.</Text>
+    <SafeAreaView className="flex-1 bg-custom-100 h-full">
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ overflow: "visible" }}
+      >
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-5">
+          <View className="flex-row items-center">
+            <View className="size-16 items-center justify-center mr-3 rounded-full bg-main">
+              <Text className="text-base text-white font-inter-semibold">
+                B
+              </Text>
+            </View>
+            <Text className="text-lg text-custom-800 font-inter-semibold">
+              Bembem
+            </Text>
+          </View>
+          <TouchableOpacity className="bg-white p-2 rounded-full">
+            <Bell size={24} color={colors.custom["800"]} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Status Card */}
+        <View
+          className="bg-custom-400 m-5 p-5 rounded-2xl shadow-md elevation-4 relative"
+          // style={{ overflow: "visible" }}
+        >
+          <Image
+            resizeMode="contain"
+            source={assets.image.zuri}
+            // style={{ width: 50, height: 50 }}
+            className="absolute -top-4 -left-6 size-56 z-20"
+          />
+          <View style={styles.statusHeader}>
+            <View className="gap-4 ml-auto">
+              <Text style={styles.statusText} className="text-2xl">
+                Zuri is Active
+              </Text>
+              <View className="items-start gap-4 bg-main p-4 rounded-lg">
+                <View className="flex-row items-center gap-2">
+                  <BatteryFullIcon size={32} color="#FFFFFF" />
+                  <Text
+                    style={styles.batteryText}
+                    className="text-xl font-extrabold text-white"
+                  >
+                    90%
+                  </Text>
+                </View>
+                <Text className="text-white" style={styles.lastInteraction}>
+                  Last interaction 1:54 PM
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Daily Summary */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Daily Summary</Text>
+          <View style={styles.summaryGrid}>
+            <View style={styles.summaryCard} className="bg-summary-100">
+              <Book size={24} color="#000000" />
+              <Text style={styles.summaryLabel}>Stories Played</Text>
+              <Text style={styles.summaryNumber}>2</Text>
+            </View>
+            <View style={styles.summaryCard} className="bg-summary-200">
+              <MaterialCommunityIcons
+                name="hands-pray"
+                size={24}
+                color="#000000"
+              />
+              <Text style={styles.summaryLabel}>Affirmations Said</Text>
+              <Text style={styles.summaryNumber}>3</Text>
+            </View>
+            <View style={styles.summaryCard} className="bg-summary-300">
+              <Ionicons
+                name="extension-puzzle-outline"
+                size={24}
+                color="#FFFFFF"
+              />
+              <Text style={styles.summaryLabel} className="text-white">
+                Learning Activities
+              </Text>
+              <Text style={styles.summaryNumber} className="text-white">
+                2
+              </Text>
+            </View>
+            <View style={styles.summaryCard} className="bg-summary-400">
+              <MaterialCommunityIcons name="alarm" size={24} color="#FFFFFF" />
+              <Text style={styles.summaryLabel} className="text-white">
+                Routines Completed
+              </Text>
+              <Text style={styles.summaryNumber} className="text-white">
+                1
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View className="flex-row gap-4 items-center h-64">
+            <View className="gap-4 p-2 bg-main rounded-lg h-full justify-center">
+              <TouchableOpacity className="flex-row px-4 py-3 items-center">
+                <Ionicons name="play-circle" size={32} color="white" />
+                <Text className="font-poppins-medium text-lg ml-2 text-white">
+                  Play Story
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="flex-row px-4 py-3 items-center">
+                <MaterialCommunityIcons
+                  name="hands-pray"
+                  size={32}
+                  color="white"
+                />
+                <Text className="font-poppins-medium text-lg ml-2 text-white">
+                  Say Affirmation
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="flex-row px-4 py-3 items-center">
+                <Send size={24} color="white" />
+                <Text className="font-poppins-medium text-lg ml-2 text-white">
+                  Send Message
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View className="flex-1 bg-custom-200 rounded-lg gap-4 h-full p-2">
+              <Text className="text-lg font-poppins-medium">Reading</Text>
+              <View className="flex-1 bg-custom-500 rounded-md p-2 gap-y-2">
+                <Text className="font-poppins-medium">Reading Streak</Text>
+
+                <View
+                  className="flex-1"
+                  onLayout={(e) => {
+                    const { width, height } = e.nativeEvent.layout;
+                    setChartDimensions({
+                      width: width - 20,
+                      height: height - 20,
+                    });
+                  }}
+                >
+                  <LineChart
+                    data={data}
+                    areaChart
+                    initialSpacing={0}
+                    maxValue={12}
+                    showVerticalLines
+                    verticalLinesColor="rgba(252, 252, 254, 0.5)"
+                    verticalLinesZIndex={1}
+                    verticalLinesThickness={2}
+                    yAxisThickness={0}
+                    hideYAxisText
+                    xAxisThickness={0}
+                    endFillColor={colors.custom["700"]}
+                    startFillColor={colors.custom["700"]}
+                    xAxisLabelTextStyle={{
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 12,
+                      fontWeight: "500",
+                    }}
+                    color={colors.custom["700"]}
+                    hideRules={true}
+                    dataPointsRadius={4}
+                    width={chartDimensions.width}
+                    height={chartDimensions.height}
+                    spacing={chartDimensions.width / data.length + 10}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Recent Activity */}
+        <View style={[styles.section]}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          <View style={styles.activityList}>
+            <View style={styles.activityItem}>
+              <View style={styles.activityIcon}>
+                <Book size={16} color="#007AFF" />
+              </View>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>
+                  Just started school feelings
+                </Text>
+                <Text style={styles.activityTime}>37 mins ago</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.viewButton}>View</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.activityItem, { zIndex: 1000 }]}>
+              <View style={styles.activityIcon}>
+                <Heart size={16} color="#FF3B30" />
+              </View>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>
+                  Just played &ldquo;The Little Bird&ldquo;
+                </Text>
+                <Text style={styles.activityTime}>59 mins ago</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.viewButton}>View</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -135,280 +246,186 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
-  contentContainer: {
-    padding: 20,
+  content: {
+    flex: 1,
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    justifyContent: "space-between",
+    padding: 20,
+    backgroundColor: "#ffffff",
   },
   headerLeft: {
-    flex: 1,
-  },
-  headerRight: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  greeting: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  childName: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 24,
-  },
-  headerIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
-    position: "relative",
-  },
-  badge: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  badgeText: {
-    color: "white",
-    fontSize: 12,
-    fontFamily: "Nunito-Bold",
-  },
-  avatarContainer: {
-    marginLeft: 8,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#007AFF",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
   },
-  deviceStatus: {
+  avatarText: {
+    // fontSize: 16,
+    // color: "#ffffff",
+    fontFamily: "Inter-SemiBold",
+  },
+  username: {
+    fontSize: 18,
+    color: "#1a1a1a",
+    fontFamily: "Inter-SemiBold",
+  },
+  statusCard: {
+    backgroundColor: "#ffffff",
+    margin: 20,
+    padding: 20,
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  deviceHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  deviceTitleContainer: {
-    flex: 1,
-  },
-  deviceTitle: {
-    fontFamily: "Nunito-SemiBold",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  connectionIndicator: {
+  statusHeader: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  connectionText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  statusDetails: {
-    flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 8,
   },
-  statusItem: {
+  statusIndicator: {
     flexDirection: "row",
     alignItems: "center",
   },
   statusText: {
-    fontFamily: "Quicksand-Medium",
-    fontSize: 14,
-    marginLeft: 6,
+    // fontSize: 16,
+    // color: "#1a1a1a",
+    // marginLeft: 8,
+    fontFamily: "Inter-SemiBold",
   },
-  quickActionsContainer: {
+  batteryText: {
+    // fontSize: 14,
+    // color: "#4CAF50",
+    fontFamily: "Inter-Medium",
+  },
+  lastInteraction: {
+    fontSize: 16,
+    // color: "#666666",
+    fontFamily: "Inter-Regular",
+  },
+  section: {
+    marginHorizontal: 20,
     marginBottom: 24,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: "Inter-SemiBold",
+    color: "#1a1a1a",
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 18,
+  summaryGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
   },
-  seeAllText: {
-    fontFamily: "Quicksand-Bold",
-    fontSize: 14,
+  summaryCard: {
+    // backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    flex: 1,
+    minWidth: "20%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  summaryNumber: {
+    fontSize: 24,
+    fontFamily: "Inter-Bold",
+    // color: "#1a1a1a",
+    marginTop: 8,
+  },
+  summaryLabel: {
+    fontSize: 10,
+    textAlign: "center",
+    fontFamily: "Inter-Medium",
+    // color: "#666666",
+    marginTop: 4,
   },
   quickActions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    gap: 8,
   },
-  actionButton: {
-    width: "48%",
+  quickAction: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  actionIcon: {
-    marginRight: 12,
-  },
-  actionText: {
-    fontFamily: "Nunito-SemiBold",
+  quickActionText: {
     fontSize: 14,
-    color: "white",
-    flex: 1,
+    fontFamily: "Inter-Medium",
+    color: "#1a1a1a",
+    marginLeft: 8,
   },
-  todayHighlightsContainer: {
-    marginBottom: 24,
-  },
-  highlightCard: {
-    flexDirection: "row",
-    borderRadius: 16,
-    overflow: "hidden",
-    height: 160,
-  },
-  highlightContent: {
-    flex: 3,
-    padding: 16,
-    justifyContent: "center",
-  },
-  highlightTitle: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  highlightText: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 14,
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  playButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    alignSelf: "flex-start",
-  },
-  playButtonText: {
-    fontFamily: "Nunito-SemiBold",
-    fontSize: 14,
-    marginLeft: 4,
-  },
-  highlightImage: {
-    flex: 2,
-    height: "100%",
-    resizeMode: "cover",
-  },
-  streakContainer: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
-  },
-  streakContent: {
-    alignItems: "center",
-  },
-  streakTitle: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 18,
-    marginBottom: 4,
-    textAlign: "center",
-  },
-  streakText: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  recentActivityContainer: {
-    marginBottom: 24,
+  activityList: {
+    gap: 12,
   },
   activityItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
+    backgroundColor: "#ffffff",
+    padding: 16,
     borderRadius: 12,
-    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  activityImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
+  activityIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#f0f8ff",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
-  activityDetails: {
+  activityContent: {
     flex: 1,
   },
   activityTitle: {
-    fontFamily: "Nunito-SemiBold",
     fontSize: 14,
+    fontFamily: "Inter-SemiBold",
+    color: "#1a1a1a",
     marginBottom: 4,
-  },
-  activityMeta: {
-    flexDirection: "row",
-    alignItems: "center",
   },
   activityTime: {
-    fontFamily: "Quicksand-Regular",
     fontSize: 12,
+    fontFamily: "Inter-Regular",
+    color: "#666666",
   },
-  summaryContainer: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-  },
-  summaryTitle: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 18,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  summaryStats: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 16,
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontFamily: "Quicksand-Regular",
-    fontSize: 12,
-    textAlign: "center",
-  },
-  viewInsightsButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-  },
-  viewInsightsText: {
-    fontFamily: "Nunito-SemiBold",
+  viewButton: {
     fontSize: 14,
-    marginRight: 4,
+    fontFamily: "Inter-Medium",
+    color: "#007AFF",
   },
 });
 
-export default OnboardingScreen;
+export default HomeScreen;

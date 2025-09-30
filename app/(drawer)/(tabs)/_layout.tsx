@@ -1,14 +1,13 @@
 // app/(tabs)/_layout.tsx
 
-import {
-  Feather,
-  FontAwesome,
-  FontAwesome6,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { HapticTab } from "@/components/HapticTab";
+import { RoutineButton } from "@/components/RoutineButton";
+import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { DrawerActions } from "@react-navigation/native";
 import { Tabs, useNavigation } from "expo-router";
+import { BookOpen } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
+import { colors } from "../../../utils/colors";
 
 const TabLayout = () => {
   const navigation = useNavigation();
@@ -35,91 +34,165 @@ const TabLayout = () => {
         tabBarInactiveTintColor: "#FFF",
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#A367B8",
+          backgroundColor: colors.main,
         },
+        tabBarButton: HapticTab,
         tabBarLabelStyle: {
           fontSize: 16,
           fontWeight: "bold",
         },
+        // animation: "shift",
       }}
       tabBar={(props) => {
         const { state, descriptors, navigation } = props;
 
         return (
-          <View
-            style={{
-              flexDirection: "row",
-              backgroundColor: "#A367B8",
-              height: 80,
-              paddingBottom: 20,
-            }}
-          >
-            {state.routes.map((route, index) => {
-              const { options } = descriptors[route.key];
-              const isFocused = state.index === index;
-              const label =
-                typeof options.tabBarLabel === "function"
-                  ? options.tabBarLabel({
-                      color: "#FFF",
-                      focused: isFocused,
-                      position: options.tabBarLabelPosition ?? "below-icon",
-                      children: "",
-                    })
-                  : options.tabBarLabel || options.title || route.name;
+          <View className="relative">
+            <View
+              style={{
+                flexDirection: "row",
+                backgroundColor: colors.main,
+                height: 80,
+                // paddingBottom: 20,
+                position: "relative",
+              }}
+            >
+              {/* Main tab bar background with cutout */}
+              {/* <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 80,
+                  backgroundColor: "#A367B8",
+                }}
+              /> */}
 
-              const onPress = () => {
-                const event = navigation.emit({
-                  type: "tabPress",
-                  target: route.key,
-                  canPreventDefault: true,
-                });
+              {/* Left cutout */}
+              <View
+                style={{
+                  position: "absolute",
+                  top: -15,
+                  left: "50%",
+                  transform: [{ translateX: -62 }],
+                  width: 30,
+                  height: 15, // Half height for bottom half
+                  backgroundColor: colors.custom["100"],
+                  borderBottomLeftRadius: 30,
+                  borderBottomRightRadius: 30,
+                  zIndex: 5,
+                }}
+              />
 
-                if (!isFocused && !event.defaultPrevented) {
-                  navigation.navigate(route.name);
+              {/* Right cutout */}
+              <View
+                style={{
+                  position: "absolute",
+                  top: -15,
+                  left: "50%",
+                  transform: [{ translateX: 32 }],
+                  width: 30,
+                  height: 15,
+                  backgroundColor: colors.custom["100"],
+                  borderBottomLeftRadius: 30,
+                  borderBottomRightRadius: 30,
+                  zIndex: 5,
+                }}
+              />
+
+              {/* Center raised section */}
+              <View
+                style={{
+                  position: "absolute",
+                  top: -20,
+                  left: "50%",
+                  transform: [{ translateX: -50 }],
+                  width: 100,
+                  height: 40,
+                  backgroundColor: colors.main,
+                  borderTopLeftRadius: 50,
+                  borderTopRightRadius: 50,
+                  zIndex: 3,
+                }}
+              />
+
+              {state.routes.map((route, index) => {
+                const { options } = descriptors[route.key];
+                const isFocused = state.index === index;
+                const label =
+                  typeof options.tabBarLabel === "function"
+                    ? options.tabBarLabel({
+                        color: "#FFF",
+                        focused: isFocused,
+                        position: options.tabBarLabelPosition ?? "below-icon",
+                        children: "",
+                      })
+                    : options.tabBarLabel || options.title || route.name;
+
+                const onPress = () => {
+                  const event = navigation.emit({
+                    type: "tabPress",
+                    target: route.key,
+                    canPreventDefault: true,
+                  });
+
+                  if (!isFocused && !event.defaultPrevented) {
+                    navigation.navigate(route.name);
+                  }
+                };
+
+                // Optional: Hide the "routine" tab if you're floating it
+                if (route.name === "routine") {
+                  return <View key="routine-spacer" className="flex-1" />;
                 }
-              };
 
-              return (
-                <TouchableOpacity
-                  key={route.key}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingVertical: 10,
-                  }}
-                  onPress={onPress}
-                >
-                  {options.tabBarIcon &&
-                    options.tabBarIcon({
-                      color: isFocused ? "#FFF" : "#FFF",
-                      focused: isFocused,
-                      size: 28,
-                    })}
-                  <Text
+                if (["content/[id]", "add-child"].includes(route.name))
+                  return null;
+
+                return (
+                  <TouchableOpacity
+                    key={route.key}
                     style={{
-                      color: isFocused ? "#FFF" : "#FFF",
-                      fontSize: 12,
-                      marginTop: 2,
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      paddingVertical: 10,
                     }}
+                    onPress={onPress}
                   >
-                    {label}
-                  </Text>
-                  {isFocused && (
-                    <View
+                    {options.tabBarIcon &&
+                      options.tabBarIcon({
+                        color: isFocused ? "#FFF" : "#FFF",
+                        focused: isFocused,
+                        size: 28,
+                      })}
+                    <Text
                       style={{
-                        width: 20,
-                        height: 2,
-                        backgroundColor: "#FFF",
-                        marginTop: 4,
-                        borderRadius: 1,
+                        color: isFocused ? "#FFF" : "#FFF",
+                        fontSize: 12,
+                        marginTop: 2,
                       }}
-                    />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-            <MenuButton />
+                    >
+                      {label}
+                    </Text>
+                    {isFocused && (
+                      <View
+                        style={{
+                          width: 20,
+                          height: 2,
+                          backgroundColor: "#FFF",
+                          marginTop: 4,
+                          borderRadius: 1,
+                        }}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+              <MenuButton />
+            </View>
+            <RoutineButton />
           </View>
         );
       }}
@@ -135,11 +208,11 @@ const TabLayout = () => {
       />
 
       <Tabs.Screen
-        name="insight"
+        name="library"
         options={{
-          title: "Insight",
-          tabBarIcon: ({ color }) => (
-            <FontAwesome6 size={28} name="chart-line" color={color} />
+          title: "Library",
+          tabBarIcon: ({ size, color }) => (
+            <BookOpen size={size} color={color} />
           ),
         }}
       />
@@ -148,10 +221,19 @@ const TabLayout = () => {
         name="routine"
         options={{
           title: "Routine",
-          tabBarIcon: ({ color }) => (
-            <Feather size={28} name="book-open" color={color} />
-          ),
+          // tabBarIcon: ({ color }) => (
+          //   <Feather size={28} name="book-open" color={color} />
+          // ),
+          // tabBarButton: RoutineButton,
+          tabBarLabelStyle: {
+            display: "none",
+          },
         }}
+        // listeners={{
+        //   tabPress: (e) => {
+        //     e.preventDefault();
+        //   },
+        // }}
       />
 
       <Tabs.Screen
@@ -161,6 +243,20 @@ const TabLayout = () => {
           tabBarIcon: ({ color }) => (
             <MaterialIcons size={28} name="chat-bubble-outline" color={color} />
           ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="content/[id]"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="add-child"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

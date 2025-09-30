@@ -1,7 +1,9 @@
-// app/(drawer)/_layout.tsx
+// app/(drawer)/drawer.tsx
+import { colors } from "@/utils/colors";
 import {
+  AntDesign,
   Feather,
-  FontAwesome,
+  FontAwesome6,
   Fontisto,
   Ionicons,
   MaterialCommunityIcons,
@@ -15,27 +17,56 @@ import {
 } from "@react-navigation/drawer";
 import { Drawer } from "expo-router/drawer";
 import { StatusBar } from "expo-status-bar";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const { width } = Dimensions.get("window");
+
+const drawerColors = {
+  100: "#FFF",
+  200: "#666",
+  300: "#333",
+};
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const drawerStatus = useDrawerStatus();
 
   return (
     <>
-      <StatusBar style={drawerStatus === "open" ? "light" : "auto"} />
+      <StatusBar style={drawerStatus === "open" ? "light" : "dark"} />
       <View
         style={{
-          backgroundColor: "#A367B8",
           opacity: 0.9,
-          flex: 0.2,
-          width: width,
         }}
-      />
-      <DrawerContentScrollView {...props}>
+        className={`justify-end pb-3 px-4 h-[140px] w-[${width}px] bg-main`}
+      >
+        <View className="flex-row items-center">
+          <Pressable
+            className="flex-[20%]"
+            onPress={() => {
+              props.navigation.closeDrawer();
+            }}
+          >
+            <AntDesign name="closecircleo" size={24} color="white" />
+          </Pressable>
+          <Text className="text-white text-[24px] font-poppins-medium flex-[80%]">
+            Zuri is sleeping
+          </Text>
+        </View>
+      </View>
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={{ paddingTop: 4 }}
+      >
         {props.state.routes.map((route, index) => {
+          if (route.name === "(tabs)") return null;
+
           const { options } = props.descriptors[route.key];
           const isFocused = props.state.index === index;
 
@@ -47,7 +78,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 alignItems: "center",
                 backgroundColor: isFocused
                   ? "rgba(163, 103, 184, 0.3)"
-                  : "#FFF",
+                  : drawerColors["100"],
                 borderRadius: 12,
                 paddingVertical: 16,
                 paddingHorizontal: 16,
@@ -59,8 +90,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 {options.drawerIcon &&
                   options.drawerIcon({
                     color: isFocused
-                      ? options.drawerActiveTintColor || "#A367B8"
-                      : options.drawerInactiveTintColor || "#666",
+                      ? options.drawerActiveTintColor || colors.main
+                      : options.drawerInactiveTintColor || drawerColors["200"],
                     size: 24,
                     focused: isFocused,
                   })}
@@ -71,12 +102,15 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                   fontSize: 16,
                   fontWeight: "bold",
                   color: isFocused
-                    ? options.drawerActiveTintColor || "#A367B8"
-                    : options.drawerInactiveTintColor || "#666",
+                    ? options.drawerActiveTintColor || colors.main
+                    : options.drawerInactiveTintColor || drawerColors["200"],
                 }}
               >
                 {typeof options.drawerLabel === "function"
-                  ? options.drawerLabel({ color: "#333", focused: isFocused })
+                  ? options.drawerLabel({
+                      color: drawerColors["300"],
+                      focused: isFocused,
+                    })
                   : options.drawerLabel || options.title || route.name}
               </Text>
             </TouchableOpacity>
@@ -96,10 +130,10 @@ const DrawerLayout = () => {
           headerShown: false,
           drawerPosition: "right",
           drawerType: "front",
-          drawerActiveTintColor: "#A367B8",
+          drawerActiveTintColor: colors.main,
           drawerStyle: {
             width: width,
-            backgroundColor: "#F4EDF8",
+            backgroundColor: colors.custom["100"],
           },
           drawerLabelStyle: {
             fontSize: 16,
@@ -107,16 +141,18 @@ const DrawerLayout = () => {
           },
         }}
       >
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="(tabs)"
           options={{
-            drawerLabel: "Home",
+            drawerLabel: () => null,
             title: "Home",
-            drawerIcon: ({ color }) => (
-              <FontAwesome size={28} name="home" color={color} />
-            ),
+            swipeEnabled: false,
+            // drawerIcon: ({ color }) => (
+            //   <FontAwesome size={28} name="home" color={color} />
+            // ),
+            // drawerItemStyle: { height: 0, overflow: "hidden" },
           }}
-        />
+        /> */}
         <Drawer.Screen
           name="record"
           options={{
@@ -137,8 +173,8 @@ const DrawerLayout = () => {
             ),
           }}
         />
-        {/* <Drawer.Screen
-          name="(tabs)/insight.tsx"
+        <Drawer.Screen
+          name="insight"
           options={{
             drawerLabel: "Insight",
             title: "Insight",
@@ -146,7 +182,8 @@ const DrawerLayout = () => {
               <FontAwesome6 size={28} name="chart-line" color={color} />
             ),
           }}
-        /> */}
+        />
+
         <Drawer.Screen
           name="parental-control"
           options={{
@@ -167,16 +204,6 @@ const DrawerLayout = () => {
             drawerLabel: "Settings",
             drawerIcon: ({ color }) => (
               <Ionicons size={28} name="settings-outline" color={color} />
-            ),
-          }}
-        />
-        <Drawer.Screen
-          name="library"
-          options={{
-            drawerLabel: "Library",
-            title: "Library",
-            drawerIcon: ({ color }) => (
-              <Ionicons size={28} name="library-outline" color={color} />
             ),
           }}
         />

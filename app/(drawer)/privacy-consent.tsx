@@ -1,13 +1,13 @@
 import ScreenWrapper from "@/components/ScreenWrapper";
-import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PrivacyConsentScreen = () => {
   return (
     <ScreenWrapper>
-      <View>
+      <SafeAreaView className="flex-1 bg-custom-100 h-full">
         <Text>PrivacyConsentScreen</Text>
-      </View>
+      </SafeAreaView>
     </ScreenWrapper>
   );
 };

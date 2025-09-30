@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Zuri Companion",
+    "name": "Zuri",
     "slug": "zuri-companion-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,11 +8,11 @@
     "scheme": "zuri",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/icons/splash-icon-dark.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#5E9CF3"
-    },
+    // "splash": {
+    //   "image": "./assets/icons/splash-icon-dark.png",
+    //   "resizeMode": "contain",
+    //   "backgroundColor": "#A367BB"
+    // },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
@@ -22,7 +22,8 @@
         "NSFaceIDUsageDescription": "Use Face ID to quickly and securely access your account.",
         "NSCameraUsageDescription": "Camera access is needed for taking profile photos.",
         "NSMicrophoneUsageDescription": "Microphone access is needed for voice interactions with Zuri.",
-        "NSBluetoothPeripheralUsageDescription": "Bluetooth is required to connect with your Zuri device."
+        "NSBluetoothPeripheralUsageDescription": "Bluetooth is required to connect with your Zuri device.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "icon": {
         "dark": "./assets/icons/ios-dark.png",
@@ -36,7 +37,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "monochromeImage": "./assets/icons/adaptive-icon.png",
-        "backgroundColor": "#5E9CF3"
+        "backgroundColor": "#A367BB"
       },
       "permissions": [
         "android.permission.CAMERA",
@@ -44,13 +45,15 @@
         "android.permission.BLUETOOTH",
         "android.permission.BLUETOOTH_ADMIN",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.USE_FINGERPRINT"
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.USE_BIOMETRIC"
       ],
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/icons/favicon.png"
     },
     "plugins": [
@@ -58,18 +61,26 @@
       "expo-font",
       "expo-web-browser",
       [
-        "expo-splash-screen",
+        "expo-notifications",
         {
-          "image": "./assets/icons/splash-icon-light.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#000000",
-          "dark": {
-            "image": "./assets/icons/splash-icon-dark.png",
-            "backgroundColor": "#FFFFFF"
-          }
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/sounds/notification.mp3"]
         }
       ],
+      // [
+      //   "expo-splash-screen",
+      //   {
+      //     "image": "./assets/icons/splash-icon-light.png",
+      //     "imageWidth": 200,
+      //     "resizeMode": "contain",
+      //     "backgroundColor": "#A367BB",
+      //     "dark": {
+      //       "image": "./assets/icons/splash-icon-dark.png",
+      //       "backgroundColor": "#A367BB"
+      //     }
+      //   }
+      // ],
       [
         "expo-local-authentication",
         {
@@ -81,6 +92,17 @@
         {
           "cameraPermission": "Allow Zuri Companion to access your camera for profile photos."
         }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your child's profile.",
+          "cameraPermission": "Allow Zuri to open the camera",
+
+          "//": "Disables the microphone permission",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {
@@ -89,7 +111,11 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "46ea668a-aeb5-45b2-b7b0-eb9101ca47a8"
       }
-    }
+    },
+    "owner": "waleathinkiepod"
   }
 }
